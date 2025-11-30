@@ -1,0 +1,95 @@
+mainmenu "RT-Thread Smart Band Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config SOC_STM32H750XB
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_OLED
+        bool "Enable OLED (SSD1306 I2C)"
+        select BSP_USING_I2C1
+        default y
+
+    config BSP_USING_MAX30102
+        bool "Enable MAX30102 Heart Rate Sensor"
+        select BSP_USING_I2C1
+        default y
+
+    config BSP_USING_ADXL345
+        bool "Enable ADXL345 Accelerometer"
+        select BSP_USING_I2C1
+        default y
+
+    config BSP_USING_DS18B20
+        bool "Enable DS18B20 Temperature Sensor"
+        default y
+
+    config BSP_USING_DS1302
+        bool "Enable DS1302 RTC"
+        default y
+
+    config BSP_USING_KEY
+        bool "Enable Keys"
+        default y
+
+    config BSP_USING_BEEP
+        bool "Enable Beeper"
+        default y
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS"
+        default y
+        select RT_USING_I2C
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 0 175
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "i2c1 sda pin number"
+                range 0 175
+                default 23
+        endif
+endmenu
+
+endmenu
